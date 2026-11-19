@@ -2,9 +2,7 @@
 
 **Session Duration:** 3.0 Hours (180 Minutes)  
 **Author:** [Ujala Jha](https://ujalajha.me) (`ujalajha.me`)  
-**Instructional Split:** 30% Architecture & Strategy (~55 Mins) | 70% Hands-On Notebooks (~125 Mins)  
 **Enterprise Use Case:** CloudCorp Smart Assistant (AskHR Agent)  
-**Target Cloud Budget:** Under **$5.00** per learner (Projected actual spend: **<$0.30**)
 
 ---
 
@@ -341,7 +339,7 @@ Open and execute the Section 1 notebook:
 
 ---
 
-## Section 2: Building Grounded RAG Pipeline (55 Mins)
+## Section 2: Building Grounded RAG Pipeline (30 Mins)
 
 ### Concept & Theory
 1. **Semantic Section Chunking:** Documents are divided along logical section boundaries (`\n---`) to preserve self-contained legal and operational context.
@@ -367,7 +365,7 @@ Open and execute the Section 2 notebook:
 
 ---
 
-## Section 3: Extending RAG to an Agentic AI Workflow (25 Mins)
+## Section 3: Extending RAG to an Agentic AI Workflow (20 Mins)
 
 ### Concept & Theory
 Static RAG can only read; it cannot take action, file tickets, or query live databases. An **Agentic AI Workflow** adds:
