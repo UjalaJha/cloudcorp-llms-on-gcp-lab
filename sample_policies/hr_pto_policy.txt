@@ -1,0 +1,61 @@
+# CloudCorp Global Human Resources Policy: Time Off, Leave of Absence, and Workplace Flexibility
+Document ID: POL-HR-2026-v3
+Last Revised: January 15, 2026
+Applies to: All CloudCorp Global Employees (Full-time, Part-time, and Fixed-Contract)
+
+---
+
+### Section 1: Paid Time Off (PTO) Accrual & Eligibility
+1.1 Full-Time Regular Employees accrue Paid Time Off (PTO) at a rate of 1.67 days per completed calendar month of service, totaling 20 days (160 hours) per full calendar year.
+1.2 Part-Time Regular Employees scheduled for 20 to 31 hours per week accrue PTO on a pro-rata basis equivalent to 50% of the full-time allocation (10 days / 80 hours per year).
+1.3 Temporary contractors, interns, and external vendors are not eligible for paid corporate PTO, but may be eligible for statutory unpaid personal days as required by local jurisdiction.
+1.4 New hires begin accruing PTO on their official start date and may utilize accrued time off following the completion of their initial 30-day onboarding probationary period.
+
+---
+
+### Section 2: PTO Carry-Over, Expiration, and Separation Rules
+2.1 Carry-Over Cap: Employees are permitted to carry over a maximum of 5 unused PTO days (40 hours) from the prior calendar year into the new calendar year.
+2.2 Rollover Expiration Window: All carried-over PTO days must be scheduled and taken on or before March 31 (end of Q1) of the subsequent calendar year. Any carried-over hours remaining unused on April 1 are permanently forfeited and cannot be recovered or converted into cash compensation.
+2.3 Payout upon Termination: CloudCorp does not pay out accrued but unused PTO upon voluntary resignation or involuntary termination, except in jurisdictions where statutory labor laws explicitly require mandatory encashment of earned vacation hours upon final settlement.
+
+---
+
+### Section 3: Request Procedures, Notice Periods, and Blackout Windows
+3.1 Short-Duration Requests (1 to 2 consecutive days): Must be submitted via the CloudCorp HR Portal (Workday/CloudHR) at least 48 hours in advance to ensure team coverage.
+3.2 Extended-Duration Requests (3 or more consecutive days): Must be submitted at least two (2) weeks (14 calendar days) in advance and require direct People Manager written approval.
+3.3 Critical Business Blackout Windows: PTO requests spanning more than 2 consecutive working days during quarterly financial close periods (the last 5 business days of March, June, September, and December) and during CloudCorp Annual Global Summit (October 12–16) will not be approved, barring verified medical emergencies.
+3.4 Overlapping Team Leave: To preserve business continuity, no more than 25% of any engineering, cloud operations, or customer support team may take PTO simultaneously. In the event of competing requests submitted on the same date, priority is granted based on date of submission.
+
+---
+
+### Section 4: Sick Leave, Mental Health, and Medical Certification
+4.1 Annual Sick Leave Allocation: Full-time employees are provided 10 dedicated paid Sick and Wellness Days per calendar year, allocated upfront on January 1. Sick leave does not accrue month-to-month and does not carry over into the following year.
+4.2 Permitted Usage: Sick days may be used for personal illness, medical appointments, mental health recovery, or caring for an immediate family member (spouse, child, parent).
+4.3 Medical Certificate Requirement: If an employee is absent due to illness for more than three (3) consecutive business days, an official medical certificate signed by a licensed healthcare professional must be uploaded to CloudCorp Benefits within 48 hours of return to work.
+4.4 Mental Wellness Days: Up to two (2) days of the annual sick leave allocation may be taken as preventative Mental Wellness Days with same-day morning notification (by 8:30 AM local time).
+
+---
+
+### Section 5: Parental, Caregiver, and Adoption Leave
+5.1 Primary Caregiver Paid Parental Leave: CloudCorp provides up to sixteen (16) weeks of fully paid parental leave for full-time employees upon the birth, adoption, or foster placement of a child. This leave runs concurrently with statutory family leave laws.
+5.2 Secondary Caregiver Paid Parental Leave: Secondary caregivers are entitled to six (6) weeks of fully paid leave, which may be taken in up to two distinct increments within the first 12 months following birth or placement.
+5.3 Notice Requirement: Employees must inform HR and their manager at least thirty (30) days prior to the anticipated start date of parental leave.
+
+---
+
+### Section 6: Bereavement, Civic Duty, and Emergency Leave
+6.1 Bereavement Leave: Employees are granted up to five (5) consecutive paid days for the loss of an immediate family member (spouse, child, parent, sibling) and up to three (3) paid days for extended family members (grandparent, in-laws).
+6.2 Jury Duty and Civic Service: Up to two (2) weeks of paid leave is granted for mandatory jury service upon submission of the official court summons to HR.
+6.3 Emergency Leave: Up to three (3) days of paid emergency leave may be authorized by HR in the event of natural disaster, severe property damage, or domestic emergency.
+
+---
+
+### Section 7: Unpaid Sabbatical and Extended Personal Leaves
+7.1 Eligibility: Full-time employees with a minimum of three (3) continuous years of service at CloudCorp may apply for an unpaid sabbatical of between 30 and 90 calendar days for professional development, charitable initiatives, or personal pursuits.
+7.2 Approvals: Unpaid sabbaticals require dual approval from the Department VP and the Chief People Officer (CPO) at least 60 days in advance.
+7.3 Health Insurance: Group health, dental, and vision insurance coverage remains active during an approved sabbatical, provided the employee continues paying their standard employee payroll deductions.
+
+---
+
+### Section 8: Escalations & Policy Inquiries
+8.1 For questions regarding policy interpretation, PTO balance discrepancies, or special accommodations, employees should contact HR Operations via Slack at `#ask-hr` or open an HR Support Ticket in ServiceNow under category `People Operations: Leave Request`.

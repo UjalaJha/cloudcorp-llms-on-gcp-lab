@@ -1,0 +1,6 @@
+# Dependencies for running workshop notebooks locally or in Cloud Shell/Colab
+google-cloud-aiplatform>=1.60.0
+google-cloud-storage>=2.14.0
+numpy>=1.24.0
+python-dotenv>=1.0.0
+

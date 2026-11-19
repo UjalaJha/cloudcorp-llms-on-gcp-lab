@@ -1,0 +1,99 @@
+main:
+  params: [args]
+  steps:
+    - init:
+        assign:
+          - user_query: ${args.query}
+          - rag_url: ${sys.get_env("RAG_SERVICE_URL")}
+          - ticket_url: ${sys.get_env("TICKET_TOOL_URL")}
+          - detected_ticket: "INC-402"
+
+    - check_custom_ticket_arg:
+        switch:
+          - condition: ${"ticket_id" in args}
+            assign:
+              - detected_ticket: ${args.ticket_id}
+
+    # Intent Router: Determine whether to lookup status, create ticket, or answer policy
+    - route_intent:
+        switch:
+          # Scenario 3: User is querying status of an existing ticket
+          - condition: ${text.match_regex(user_query, "INC-[0-9]+") or "ticket_id" in args}
+            next: handle_ticket_status_lookup
+
+          # Scenario 2: User reports broken/damaged equipment requiring replacement
+          - condition: ${text.match_regex(user_query, "(?i)(broken|damage|cracked|flicker|shattered|malfunction|replace)")}
+            next: handle_replacement_flow
+
+        # Scenario 1: Default to pure policy RAG
+        next: handle_pure_rag_flow
+
+    # --------------------------------------------------------------------------
+    # SCENARIO 2: RAG Guidance + Autonomous Ticket Creation
+    # --------------------------------------------------------------------------
+    - handle_replacement_flow:
+        call: http.post
+        args:
+          url: ${rag_url + "/ask"}
+          auth:
+            type: OIDC
+            audience: ${rag_url}
+          body:
+            query: ${user_query}
+        result: rag_response
+    - create_replacement_ticket:
+        call: http.post
+        args:
+          url: ${ticket_url}
+          auth:
+            type: OIDC
+            audience: ${ticket_url}
+          body:
+            action: "create"
+            summary: ${user_query}
+            category: "Hardware Replacement"
+        result: new_ticket_response
+    - return_replacement_result:
+        return:
+          scenario: "Scenario 2: RAG Guidance & Autonomous Ticket Creation"
+          policy_guidance: ${rag_response.body.answer}
+          generated_ticket: ${new_ticket_response.body}
+          next_steps: "Take your ticket ID to Floor 2 Tech Depot to claim your emergency loaner laptop."
+
+    # --------------------------------------------------------------------------
+    # SCENARIO 3: Live Incident Status Lookup (Tool Calling)
+    # --------------------------------------------------------------------------
+    - handle_ticket_status_lookup:
+        call: http.post
+        args:
+          url: ${ticket_url}
+          auth:
+            type: OIDC
+            audience: ${ticket_url}
+          body:
+            action: "check"
+            ticket_id: ${detected_ticket}
+        result: status_response
+    - return_status_result:
+        return:
+          scenario: "Scenario 3: Live Ticket Status Lookup"
+          ticket_status: ${status_response.body}
+
+    # --------------------------------------------------------------------------
+    # SCENARIO 1: Pure Policy Grounding (Zero Tool Overhead)
+    # --------------------------------------------------------------------------
+    - handle_pure_rag_flow:
+        call: http.post
+        args:
+          url: ${rag_url + "/ask"}
+          auth:
+            type: OIDC
+            audience: ${rag_url}
+          body:
+            query: ${user_query}
+        result: rag_response
+    - return_policy_result:
+        return:
+          scenario: "Scenario 1: Pure Policy Grounding"
+          policy_guidance: ${rag_response.body.answer}
+          sources: ${rag_response.body.sources}

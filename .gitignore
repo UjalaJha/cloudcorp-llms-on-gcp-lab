@@ -1,0 +1,20 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*key*.json
+*credential*.json
+gcp-key.json
+
+# Mentor-Only Training Assets
+/mentor_only
+mentor_only/
+
+# OS & Python Artifacts
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+env/

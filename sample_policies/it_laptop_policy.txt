@@ -1,0 +1,24 @@
+# CloudCorp IT Hardware & Equipment Policy
+Document ID: POL-IT-2026-v2
+Last Revised: February 2, 2026
+Applies to: All Global CloudCorp Personnel
+
+---
+
+### Section 1: Standard Hardware Refresh & Lifecycle
+1.1 Standard corporate and engineering laptops are scheduled for proactive lifecycle refresh every thirty-six (36) months from initial provision date.
+1.2 Requests for early hardware upgrades prior to the 36-month cycle require Department Director sign-off and cost-center allocation approval.
+
+---
+
+### Section 2: Damaged, Broken, or Malfunctioning Devices
+2.1 When an employee experiences hardware damage (e.g., cracked or flickering display screens, broken chassis, liquid spills, or battery failure), the employee is eligible for an expedited device replacement.
+2.2 An official IT incident ticket (with prefix INC-) must be generated detailing the issue summary, device symptoms, and urgency before equipment can be dispensed.
+2.3 Screen fractures and motherboard failures are categorized as Priority-High (P2) hardware tickets and automatically assigned to the Hardware Fulfillment Desk with a target turnaround of 24 hours.
+
+---
+
+### Section 3: Loaner Devices and Pick-Up Protocols
+3.1 Once a replacement ticket (INC-XXXX) is generated, the employee may immediately visit the IT Helpdesk (Floor 2, Tech Depot) during operating hours (8:00 AM – 6:00 PM) to claim an emergency loaner laptop.
+3.2 Employees must quote their active incident ticket ID when collecting the loaner.
+3.3 CloudCorp data backups from Google Drive and Cloud Workstations will be automatically synchronized to the replacement unit upon login.

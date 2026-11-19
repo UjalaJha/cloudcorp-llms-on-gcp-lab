@@ -1,0 +1,23 @@
+# CloudCorp Hybrid and Remote Work Policy
+Document ID: POL-REMOTE-2026-v2
+Last Revised: January 20, 2026
+Applies to: All Global CloudCorp Personnel
+
+---
+
+### Section 1: Hybrid Work Eligibility and Schedule
+1.1 Regular full-time employees are eligible for hybrid work, allowing remote work for up to three (3) business days per week, subject to direct manager approval.
+1.2 Mandatory in-office collaboration days are designated on Tuesdays and Thursdays for all engineering, product, and leadership teams.
+
+---
+
+### Section 2: Core Working Hours and Availability
+2.1 All employees working remotely must remain accessible via Slack and Google Meet during core team hours: 10:00 AM to 3:00 PM in their local office time zone.
+2.2 Non-exempt (hourly) employees must track all remote working hours accurately in Workday and obtain advance authorization before working overtime.
+
+---
+
+### Section 3: Equipment, Internet, and Home Office Stipend
+3.1 CloudCorp provides an annual tax-free Home Office Expense Stipend of $500 per calendar year to reimburse high-speed broadband, ergonomic chairs, monitors, and peripherals.
+3.2 Reimbursement claims must be submitted via Concur within sixty (60) days of purchase accompanied by an itemized receipt.
+3.3 CloudCorp IT maintains ownership of all issued computing hardware (laptops, monitors, yubikeys) regardless of remote work status.
