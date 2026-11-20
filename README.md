@@ -38,6 +38,7 @@
     - [11. Service Account Key Traversal (`gcp-key.json`)](#11-seamless-service-account-key-traversal-gcp-keyjson)
     - [12. Standalone Cell Execution Guardrails](#12-standalone-cell-execution-guardrails)
     - [13. macOS zsh `#` Interactive Comment Execution Gotcha](#13-macos-zsh--interactive-comment-execution-gotcha)
+    - [14. Cloud Shell / ADC Quota Project Error (`projects/618104708054`)](#14-cloud-shell--adc-quota-project-error-projects618104708054)
 
 ---
 
@@ -418,6 +419,14 @@ Open and execute the Section 1 notebook:
 ### 👉 Hands-On Execution
 Open and execute the Section 2 notebook:
 ➡️ **[`notebooks/02_Section2_RAG_Pipeline.ipynb`](notebooks/02_Section2_RAG_Pipeline.ipynb)**
+
+> [!TIP]
+> **Cloud Shell Editor ADC Quota Project Tip:**
+> If running in Google Cloud Shell Editor with user credentials and you encounter a `403 PermissionDenied ... consumer: projects/618104708054` error in Cell 2, run this one command in your Cloud Shell terminal:
+> ```bash
+> gcloud auth application-default set-quota-project $(gcloud config get-value project)
+> ```
+> This permanently attaches your project ID as the quota project for Vertex AI.
 
 *(Note: The exact same chunking and grounded retrieval logic is packaged inside [`rag_service/main.py`](rag_service/main.py) for serverless deployment on Google Cloud Run).*
 
@@ -912,6 +921,22 @@ During real-world enterprise deployments and live workshop executions, several s
 * **Symptom:** `zsh: command not found: #` when copying and pasting multi-line shell snippets.
 * **Root Cause:** On macOS, the default `zsh` interactive shell treats `#` as an executable command rather than a comment unless `setopt interactivecomments` is configured in `~/.zshrc`.
 * **Resolution:** All multi-line code boxes in the README are cleanly partitioned into pure executable statements without embedded comment lines.
+
+### 14. Cloud Shell / ADC Quota Project Error (`projects/618104708054`)
+* **Symptom:** When running notebook cells (such as Cell 2 of Section 2) in Cloud Shell Editor, Vertex AI throws:
+  ```
+  PermissionDenied: 403 Your application is authenticating by using local Application Default Credentials.
+  The aiplatform.googleapis.com API requires a quota project, which is not set by default. ...
+  reason: "SERVICE_DISABLED", consumer: "projects/618104708054"
+  ```
+* **Root Cause:** In Cloud Shell, user Application Default Credentials (ADC) default quota billing to Google's internal Cloud Shell client project (`618104708054`), where the Vertex AI API (`aiplatform.googleapis.com`) is not enabled.
+* **Resolution (2 Solutions):**
+  1. **Terminal Command (Immediate 1-Liner):** In the Cloud Shell terminal, set your project as the quota project on your ADC:
+     ```bash
+     gcloud auth application-default set-quota-project $(gcloud config get-value project)
+     ```
+  2. **Automatic Code-Level Binding (Built-In):** The updated notebook auth cells automatically bind `os.environ["GOOGLE_CLOUD_PROJECT"]` and `os.environ["GOOGLE_CLOUD_QUOTA_PROJECT"]`, request ADC with `google.auth.default(quota_project_id=PROJECT_ID)`, and attach `credentials.with_quota_project(PROJECT_ID)` directly into `vertexai.init(..., credentials=credentials)` and `storage.Client(..., credentials=credentials)`.
+  3. **Service Account Fallback:** Point to the service account key generated during Step 0 (`gcp-key.json`), which bypasses user ADC quota checks entirely.
 
 ---
 
