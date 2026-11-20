@@ -117,10 +117,25 @@ else:
         leaf_node_embedding_count=100,
         leaf_nodes_to_search_percent=10,
         distance_measure_type="DOT_PRODUCT_DISTANCE",
+        shard_size="SHARD_SIZE_SMALL",
         description="CloudCorp Policy Vector Search Index",
         sync=True
     )
     print(f"   ✅ Created Vector Search Index: {index.resource_name}")
+
+# Helper to inspect shard size of existing or newly created index
+def get_index_shard_size(idx):
+    try:
+        d = idx.to_dict()
+        meta = d.get("metadata", {})
+        if isinstance(meta, dict):
+            if "shardSize" in meta:
+                return meta["shardSize"]
+            if "config" in meta and isinstance(meta["config"], dict):
+                return meta["config"].get("shardSize", "SHARD_SIZE_MEDIUM")
+    except Exception as e:
+        print(f"   ℹ️ Could not inspect index shard size ({e}), defaulting to SHARD_SIZE_MEDIUM.")
+    return "SHARD_SIZE_MEDIUM"
 
 # 6. Create or Get Vector Search Index Endpoint
 print("\n4. Configuring Matching Engine Index Endpoint...")
@@ -147,12 +162,22 @@ deployed_indexes = [d.id for d in endpoint.deployed_indexes]
 if DEPLOYED_INDEX_ID in deployed_indexes:
     print(f"   ℹ️ Index already deployed under id: '{DEPLOYED_INDEX_ID}'.")
 else:
-    print(f"   ⏳ Deploying index with e2-standard-2 node (takes ~15-20 mins)...")
+    # Determine compatible machine type based on the index's shard size
+    shard_size = get_index_shard_size(index)
+    if shard_size == "SHARD_SIZE_SMALL":
+        default_machine = "e2-standard-2"
+    else:
+        # SHARD_SIZE_MEDIUM requires e2-standard-16 or n1-standard-16
+        default_machine = "e2-standard-16"
+    
+    machine_type = os.environ.get("MACHINE_TYPE", default_machine)
+    print(f"   ℹ️ Index shard size: '{shard_size}' -> Using compatible machine type: '{machine_type}'")
+    print(f"   ⏳ Deploying index with {machine_type} node (takes ~15-20 mins in GCP)...")
     endpoint.deploy_index(
         index=index,
         deployed_index_id=DEPLOYED_INDEX_ID,
         display_name="cloudcorp_policy_deployed",
-        machine_type="e2-standard-2",
+        machine_type=machine_type,
         min_replica_count=1,
         max_replica_count=1,
         sync=True
