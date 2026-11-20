@@ -697,7 +697,7 @@ gcloud workflows run cloudcorp-agent-workflow \
 
 > [!TIP]
 > **Instructor & Student Guide:**  
-> In a live workshop setting, students do not need to wait for full deployment to understand the architecture. The entire pipeline takes **~35 to 45 minutes**, with over **85% being passive cloud provisioning wait time**. You can explain the code, walk through the architecture diagram, and review the cost trade-offs even if you choose not to deploy the live endpoint during class!
+> do not need to wait for full deployment to understand the architecture. The entire pipeline takes **~35 to 45 minutes**, with over **85% being passive cloud provisioning wait time**. GO through the code, architecture diagram, and review the cost trade-offs even if you choose not to deploy the live endpoint during class!
 
 | Step / Phase | Action Taken | Duration | Type | Pedagogical Takeaway |
 | :--- | :--- | :--- | :--- | :--- |
