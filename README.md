@@ -19,6 +19,9 @@
 6. [Section 2: Building Grounded RAG Pipeline (55 Mins)](#section-2-building-grounded-rag-pipeline-55-mins)
 7. [Section 3: Extending RAG to an Agentic AI Workflow (25 Mins)](#section-3-extending-rag-to-an-agentic-ai-workflow-25-mins)
 8. [Section 4: Production Deployment Track — Serverless Microservices (50 Mins)](#section-4-production-deployment-track--serverless-microservices-50-mins)
+   - [🛠️ Step 0: Setup in Cloud Shell Editor (Clone & `cat .env`)](#️-step-0-setup-in-google-cloud-shell-editor-recommended)
+   - [Option A: 1-Click Automated Deployment](#option-a-1-click-automated-deployment-script)
+   - [Option B: Step-by-Step Manual Deployment](#option-b-step-by-step-manual-deployment-recommended-for-learning)
 9. [Section 5: Production Architecture & Cost Controls (20 Mins)](#section-5-production-architecture--cost-controls-20-mins)
 10. [Section 6: Mandatory Resource Cleanup (10 Mins)](#section-6-mandatory-resource-cleanup-10-mins)
 11. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting--enterprise-best-practices-learnings--gotchas)
@@ -447,7 +450,7 @@ Open and execute the Section 3 notebook:
 > [!NOTE]
 > **Pedagogical Note for Learners & Instructors:**  
 > In Sections 1 through 4, you prototyped, tested, and evaluated RAG and agentic tool-calling interactively inside Python notebooks.  
-> In this optional production track, you deploy that exact same code into live enterprise serverless infrastructure on Google Cloud Platform:
+> In this production track, you deploy that exact same code into live enterprise serverless infrastructure on Google Cloud Platform:
 > * **Cloud Run** hosts the containerized FastAPI RAG service (`rag_service/`).
 > * **Cloud Functions (2nd Gen)** hosts the lightweight IT helpdesk tool (`ticket_tool/`).
 > * **Cloud Workflows** orchestrates the multi-step intent routing and tool execution (`workflows/workflow.yaml`).
@@ -480,6 +483,49 @@ flowchart LR
     class GCS storage;
     class CF action;
 ```
+
+---
+
+### 🛠️ Step 0: Setup in Google Cloud Shell Editor (Recommended)
+
+If you executed Sections 1 through 3 in Google Colab or locally, Section 4 transitions to live cloud serverless infrastructure. The fastest and most reliable way to execute this is inside **Google Cloud Shell Editor** (a full browser-based VS Code environment with pre-authenticated `gcloud`):
+
+1. **Open Google Cloud Shell Editor:**
+   In the [Google Cloud Console](https://console.cloud.google.com/), click the **`>_`** terminal icon in the top-right navbar, then click the **Open Editor** button on the Cloud Shell toolbar.
+
+2. **Clone the Repository in Cloud Shell:**
+   Open the terminal inside Cloud Shell and clone the lab repository:
+   ```bash
+   git clone https://github.com/UjalaJha/cloudcorp-llms-on-gcp-lab.git
+   cd cloudcorp-llms-on-gcp-lab
+   ```
+   *(To open this repository in the Editor file explorer sidebar, run: `cloudshell workspace .` or click **File** $\to$ **Open Folder** $\to$ `cloudcorp-llms-on-gcp-lab`)*.
+
+3. **Generate and Source `.env` (Why `cat` is Needed Here):**
+   > [!IMPORTANT]
+   > **Why is the `cat` step required right here?**  
+   > 1. `.env` is in `.gitignore` to prevent leaking cloud secrets, so `git clone` intentionally does not include it.  
+   > 2. Uploading a `.env` file from your local laptop through the Cloud Shell web upload dialog often fails or suppresses the file because it is a hidden UNIX dotfile (`.*`).  
+   > 
+   > Running this one-liner directly in your Cloud Shell terminal creates `.env`, automatically populates your active `PROJECT_ID`, and exports all variables into your shell session in one step:
+
+   ```bash
+   cat << EOF > .env
+   PROJECT_ID=$(gcloud config get-value project)
+   REGION=us-central1
+   BUCKET_NAME=$(gcloud config get-value project)-cloudcorp-policies
+   EMBEDDING_MODEL=text-embedding-004
+   GENERATIVE_MODEL=gemini-3.5-flash-lite
+   EOF
+
+   set -a; source .env; set +a
+   ```
+
+4. **Inspect the Service Code in the Editor:**
+   In the Cloud Shell Editor file tree, you can now inspect the production code you are about to deploy:
+   * [`rag_service/main.py`](rag_service/main.py) & [`rag_service/Dockerfile`](rag_service/Dockerfile): Containerized FastAPI RAG service.
+   * [`ticket_tool/main.py`](ticket_tool/main.py): Cloud Functions 2nd Gen IT helpdesk tool.
+   * [`workflows/workflow.yaml`](workflows/workflow.yaml): Cloud Workflows declarative intent router.
 
 ---
 
