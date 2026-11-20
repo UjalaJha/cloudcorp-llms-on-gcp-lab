@@ -9,18 +9,19 @@
 ## Table of Contents
 1. [Session Overview & Architecture](#session-overview--architecture)
 2. [Budget & Cost Guardrails (< $5.00)](#budget--cost-guardrails---500)
-3. [Environment Setup & Dependencies](#environment-setup--dependencies)
+3. [Prerequisites & System Requirements](#prerequisites--system-requirements)
+4. [Environment Setup & Dependencies](#environment-setup--dependencies)
    - [⚡ Quickstart: Activate Services via Cloud Shell](#-quickstart-activate-gcp-services-via-cloud-shell-1-command)
    - [Virtual Environment Setup (`venv` vs Colab)](#do-you-need-a-virtual-environment-venv)
    - [Centralized Configuration (`.env`)](#centralized-configuration-env)
    - [Generate Credentials (Cloud Shell & Manual)](#how-to-generate--configure-google_application_credentials-for-local-execution)
-4. [Section 1: Ingestion & Document Corpus Setup (20 Mins)](#section-1-ingestion--document-corpus-setup-20-mins)
-5. [Section 2: Building Grounded RAG Pipeline (55 Mins)](#section-2-building-grounded-rag-pipeline-55-mins)
-6. [Section 3: Extending RAG to an Agentic AI Workflow (25 Mins)](#section-3-extending-rag-to-an-agentic-ai-workflow-25-mins)
-7. [Section 4: Production Deployment Track — Serverless Microservices (50 Mins)](#section-4-production-deployment-track--serverless-microservices-50-mins)
-8. [Section 5: Production Architecture & Cost Controls (20 Mins)](#section-5-production-architecture--cost-controls-20-mins)
-9. [Section 6: Mandatory Resource Cleanup (10 Mins)](#section-6-mandatory-resource-cleanup-10-mins)
-10. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting--enterprise-best-practices-learnings--gotchas)
+5. [Section 1: Ingestion & Document Corpus Setup (20 Mins)](#section-1-ingestion--document-corpus-setup-20-mins)
+6. [Section 2: Building Grounded RAG Pipeline (55 Mins)](#section-2-building-grounded-rag-pipeline-55-mins)
+7. [Section 3: Extending RAG to an Agentic AI Workflow (25 Mins)](#section-3-extending-rag-to-an-agentic-ai-workflow-25-mins)
+8. [Section 4: Production Deployment Track — Serverless Microservices (50 Mins)](#section-4-production-deployment-track--serverless-microservices-50-mins)
+9. [Section 5: Production Architecture & Cost Controls (20 Mins)](#section-5-production-architecture--cost-controls-20-mins)
+10. [Section 6: Mandatory Resource Cleanup (10 Mins)](#section-6-mandatory-resource-cleanup-10-mins)
+11. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting--enterprise-best-practices-learnings--gotchas)
     - [1. Model Availability & Multi-Region (`global` vs `us-central1`)](#1-model-availability--multi-region-architecture-global-vs-us-central1)
     - [2. Cloud Build & Artifact Registry APIs Missing](#2-cloud-build--artifact-registry-apis-missing-on-deploy-from-source)
     - [3. Cloud Shell `.env` Upload Failure & Sourcing](#3-cloud-shell-env-upload-failure--sourcing-gotcha)
@@ -167,6 +168,60 @@ This workshop is engineered to execute safely **under $5.00** per learner:
 
 > [!WARNING]
 > **Vector Search Endpoint Cost Trap:** In full production, Vertex AI Vector Search deploys to dedicated VM nodes (`e2-standard-2`) costing ~$0.25 to $0.35/hour that **do not scale down to zero**. To protect learner budgets and eliminate lingering charges, our hands-on lab runs vector cosine similarity in memory on Cloud Run / Colab, while the lecture explains how dedicated Vector Search endpoints operate at scale.
+
+---
+
+## Prerequisites & System Requirements
+
+Before beginning the workshop, review the following account, runtime, and developer environment requirements:
+
+### 1. Developer Environment & IDE (Choose One)
+
+| Environment / IDE | Recommendation | When to Use | Setup Notes |
+| :--- | :--- | :--- | :--- |
+| **Google Cloud Shell & Cloud Shell Editor** | 🌟 **Top Recommendation** | Fastest zero-install setup directly in browser | Pre-installed with `gcloud`, `git`, `python3.11`, `curl`, and a browser-based VS Code interface. No local installation required! |
+| **VS Code / Cursor (Local)** | Recommended for Local Dev | Developing and debugging locally on your laptop | Requires **Python extension** (`ms-python.python`) and **Jupyter extension** (`ms-toolsai.jupyter`) for opening `.ipynb` notebooks. |
+| **Google Colab** | Recommended for Notebook Track | Running only the interactive notebooks (`notebooks/`) | Zero-install cloud Jupyter runtime. Works directly with `google.colab.auth.authenticate_user()`. |
+| **PyCharm (Professional / Community)** | Optional | JetBrains IDE preference | Configure Python 3.10 or 3.11 virtual environment as the project interpreter. |
+
+---
+
+### 2. Runtime & Software Requirements
+
+* **Python Runtime:**
+  * **Required Version:** **Python 3.10** or **Python 3.11** *(Python 3.11 strongly recommended)* to match the Cloud Functions 2nd Gen runtime (`python311`) and Cloud Run container.
+  * Check version: `python3 --version`
+* **Python Package Manager (`pip`):**
+  * `pip >= 23.0`
+  * Check version: `pip --version`
+* **Google Cloud SDK (`gcloud` CLI):**
+  * Version: **`gcloud >= 480.0.0`** (Pre-installed in Google Cloud Shell).
+  * Check version: `gcloud --version`
+  * If running locally, install via [Google Cloud SDK Installation Guide](https://cloud.google.com/sdk/docs/install) or on macOS: `brew install google-cloud-sdk`.
+* **Git CLI:**
+  * `git >= 2.30.0` for cloning and managing the lab repository.
+  * Check version: `git --version`
+* **HTTP Client (`curl`):**
+  * Pre-installed on macOS, Linux, and Cloud Shell for running REST verification smoke tests against deployed microservices.
+
+---
+
+### 3. Google Cloud Platform (GCP) Account & Access
+
+* **Active GCP Project:** An active Google Cloud project with billing enabled (e.g. standard personal GCP account, or student sandbox project provided by UpGrad / NuveLabs / Qwiklabs).
+* **IAM Permissions:** Your account should have **`Editor`** (`roles/editor`) or **`Owner`** access to enable APIs, create Cloud Storage buckets, deploy Cloud Run services, deploy Cloud Functions, and register Cloud Workflows.
+* **Target GCP Region:** **`us-central1`** (Iowa) is used throughout this workshop for low cost and immediate availability of Vertex AI `text-embedding-004` and Cloud Storage. Foundation model reasoning uses the **`global`** endpoint (`gemini-3.5-flash-lite`).
+
+---
+
+### 4. Operating System Compatibility
+
+* **macOS:** Fully compatible with default `zsh` or `bash`.
+* **Linux (Ubuntu, Debian, RedHat):** Fully compatible with `bash`.
+* **Windows:**
+  * **Recommended:** Use **Google Cloud Shell** directly in Chrome/Edge, or use **WSL2 (Windows Subsystem for Linux)** with Ubuntu.
+  * *Avoid running bash deployment scripts (`.sh`) directly in native Windows Command Prompt (cmd) or Windows PowerShell.*
+* **Hardware Requirements:** Minimal! 4 GB RAM, 2 CPU cores, and 1 GB available disk space. All heavy embedding calculations and LLM reasoning run in Google Cloud's Vertex AI data centers—not on your local machine.
 
 ---
 
