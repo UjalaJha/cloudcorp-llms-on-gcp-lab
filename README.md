@@ -7,22 +7,22 @@
 ---
 
 ## Table of Contents
-1. [Session Overview & Architecture](#session-overview--architecture)
-2. [Budget & Cost Guardrails](#budget--cost-guardrails)
-3. [Prerequisites & System Requirements](#prerequisites--system-requirements)
-4. [Environment Setup & Dependencies](#environment-setup--dependencies)
-5. [Section 1: Ingestion & Document Corpus Setup](#section-1-ingestion--document-corpus-setup)
-6. [Section 2: Building Grounded RAG Pipeline](#section-2-building-grounded-rag-pipeline)
-7. [Section 3: Extending RAG to an Agentic AI Workflow](#section-3-extending-rag-to-an-agentic-ai-workflow)
-8. [Section 4: Production Deployment Track — Serverless Microservices](#section-4-production-deployment-track--serverless-microservices)
-   - [Track 4A: Serverless Cloud Run Microservice (In-Memory NumPy RAG)](#option-a-1-click-automated-deployment-script-not-recommended-for-lab)
-   - [Bonus Section 4B: Scaling to Millions of Documents with Vertex AI Vector Search](#-bonus-section-4b-scaling-to-millions-of-documents-with-vertex-ai-vector-search-matching-engine)
-9. [Section 5: Production Architecture & Cost Controls](#section-5-production-architecture--cost-controls)
-10. [Section 6: Mandatory Resource Cleanup](#section-6-mandatory-resource-cleanup)
-11. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting--enterprise-best-practices-learnings--gotchas)
-
+1. [Session Overview & Architecture](#session-overview)
+2. [Budget & Cost Guardrails](#budget-guardrails)
+3. [Prerequisites & System Requirements](#prerequisites)
+4. [Environment Setup & Dependencies](#environment-setup)
+5. [Section 1: Ingestion & Document Corpus Setup (20 Mins)](#section-1)
+6. [Section 2: Building Grounded RAG Pipeline (55 Mins)](#section-2)
+7. [Section 3: Extending RAG to an Agentic AI Workflow (25 Mins)](#section-3)
+8. [Section 4: Production Deployment Track — Serverless Microservices (50 Mins)](#section-4)
+   - [Track 4A: Serverless Production Deployment (Cloud Run + In-Memory RAG)](#track-4a)
+   - [Bonus Section 4B: Scaling to Millions of Documents with Vertex AI Vector Search](#bonus-section-4b)
+9. [Section 5: Production Architecture & Cost Controls (10 Mins)](#section-5)
+10. [Section 6: Mandatory Resource Cleanup (10 Mins)](#section-6)
+11. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting)
 ---
 
+<a id="session-overview"></a>
 ## Session Overview & Architecture
 
 In this 3-hour workshop, learners build, deploy, and observe a production-ready enterprise GenAI application using **Google Cloud Platform (GCP)** managed services. 
@@ -137,7 +137,8 @@ flowchart TD
 
 ---
 
-## Budget & Cost Guardrails 
+<a id="budget-guardrails"></a>
+## Budget & Cost Guardrails
 
 This workshop is engineered to execute safely with minimal to no cost:
 
@@ -156,6 +157,7 @@ This workshop is engineered to execute safely with minimal to no cost:
 
 ---
 
+<a id="prerequisites"></a>
 ## Prerequisites & System Requirements
 
 Before beginning the workshop, review the following account, runtime, and developer environment requirements:
@@ -209,6 +211,7 @@ Before beginning the workshop, review the following account, runtime, and develo
 
 ---
 
+<a id="environment-setup"></a>
 ## Environment Setup & Dependencies
 
 
@@ -361,6 +364,7 @@ GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
 
 ---
 
+<a id="section-1"></a>
 ## Section 1: Ingestion & Document Corpus Setup
 
 ### Concept & Theory
@@ -377,6 +381,7 @@ Open and execute the Section 1 notebook:
 
 ---
 
+<a id="section-2"></a>
 ## Section 2: Building Grounded RAG Pipeline
 
 ### Concept & Theory
@@ -411,6 +416,7 @@ Open and execute the Section 2 notebook:
 
 ---
 
+<a id="section-3"></a>
 ## Section 3: Extending RAG to an Agentic AI Workflow
 
 ### Concept & Theory
@@ -433,6 +439,7 @@ Open and execute the Section 3 notebook:
 
 ---
 
+<a id="section-4"></a>
 ## Section 4: Production Deployment Track — Serverless Microservices
 
 > [!NOTE]
@@ -516,6 +523,9 @@ If you executed Sections 1 through 3 in Google Colab or locally, Section 4 trans
    * [`workflows/workflow.yaml`](workflows/workflow.yaml): Cloud Workflows declarative intent router.
 
 ---
+
+<a id="track-4a"></a>
+### Track 4A: Serverless Production Deployment (Cloud Run + In-Memory NumPy RAG)
 
 ### Option A: 1-Click Automated Deployment Script (Not Recommended for Lab)
 
@@ -662,6 +672,7 @@ gcloud workflows run cloudcorp-agent-workflow \
 
 ---
 
+<a id="bonus-section-4b"></a>
 ### 🎁 Bonus Section 4B: Scaling to Millions of Documents with Vertex AI Vector Search (Matching Engine)
 
 > [!NOTE]
@@ -763,6 +774,7 @@ curl -X POST "${VS_RAG_URL}/ask" \
 
 ---
 
+<a id="section-5"></a>
 ## Section 5: Production Architecture & Cost Controls
 
 ### Concept & Theory
@@ -779,6 +791,7 @@ Open and execute the Section 4 notebook:
 
 ---
 
+<a id="section-6"></a>
 ## Section 6: Mandatory Resource Cleanup
 
 To ensure zero ongoing charges and guarantee your total workshop bill remains under **$5.00** (projected actual: **<$0.30**), clean up all deployed compute instances, storage, container images, service accounts, and IAM bindings before concluding your session.
@@ -840,6 +853,7 @@ echo "=== Cleanup completed! All lab resources, IAM bindings, and credentials su
 
 ---
 
+<a id="troubleshooting"></a>
 ## Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)
 
 During real-world enterprise deployments and live workshop executions, several subtle GCP SDK behaviors, authentication nuances, and regional model availability policies can arise. The codebase incorporates proactive guardrails for each:

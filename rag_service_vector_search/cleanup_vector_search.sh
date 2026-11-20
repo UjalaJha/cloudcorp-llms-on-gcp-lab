@@ -86,3 +86,4 @@ echo "=========================================================="
 echo "🎉 VECTOR SEARCH TEARDOWN COMPLETED SUCCESSFULLY!"
 echo "   All dedicated VMs and endpoints have been decommissioned."
 echo "=========================================================="
+

@@ -165,3 +165,4 @@ print("\nCopy these to your .env or Cloud Run environment variables:")
 print(f"INDEX_ENDPOINT_ID={endpoint.name}")
 print(f"DEPLOYED_INDEX_ID={DEPLOYED_INDEX_ID}")
 print("=" * 60)
+

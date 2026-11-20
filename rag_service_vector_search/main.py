@@ -198,3 +198,4 @@ def ask_policy(req: QueryRequest):
                 "index_endpoint_id": INDEX_ENDPOINT_ID
             }
         )
+
