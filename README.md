@@ -564,7 +564,16 @@ EOF
 fi
 set -a; source .env; set +a
 
-# 2. Grant project-level invoker & token creator roles (avoids sandbox 403 errors)
+# 2. Ensure the lab Service Account exists and grant required roles
+gcloud iam service-accounts create cloudcorp-lab-sa \
+  --display-name="CloudCorp Lab Service Account" \
+  --quiet 2>/dev/null || true
+
+gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+  --member="serviceAccount:cloudcorp-lab-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --role="roles/editor" \
+  --quiet
+
 gcloud projects add-iam-policy-binding ${PROJECT_ID} \
   --member="serviceAccount:cloudcorp-lab-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
   --role="roles/run.invoker" \
