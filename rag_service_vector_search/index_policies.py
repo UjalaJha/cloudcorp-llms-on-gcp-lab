@@ -114,6 +114,8 @@ else:
         contents_delta_uri=gcs_uri,
         dimensions=768,
         approximate_neighbors_count=10,
+        leaf_node_embedding_count=100,
+        leaf_nodes_to_search_percent=10,
         distance_measure_type="DOT_PRODUCT_DISTANCE",
         description="CloudCorp Policy Vector Search Index",
         sync=True
