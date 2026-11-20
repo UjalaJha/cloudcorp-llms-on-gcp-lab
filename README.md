@@ -8,37 +8,16 @@
 
 ## Table of Contents
 1. [Session Overview & Architecture](#session-overview--architecture)
-2. [Budget & Cost Guardrails (< $5.00)](#budget--cost-guardrails---500)
+2. [Budget & Cost Guardrails](#budget--cost-guardrails)
 3. [Prerequisites & System Requirements](#prerequisites--system-requirements)
 4. [Environment Setup & Dependencies](#environment-setup--dependencies)
-   - [⚡ Quickstart: Activate Services via Cloud Shell](#-quickstart-activate-gcp-services-via-cloud-shell-1-command)
-   - [Virtual Environment Setup (`venv` vs Colab)](#do-you-need-a-virtual-environment-venv)
-   - [Centralized Configuration (`.env`)](#centralized-configuration-env)
-   - [Generate Credentials (Cloud Shell & Manual)](#how-to-generate--configure-google_application_credentials-for-local-execution)
-5. [Section 1: Ingestion & Document Corpus Setup (20 Mins)](#section-1-ingestion--document-corpus-setup-20-mins)
-6. [Section 2: Building Grounded RAG Pipeline (55 Mins)](#section-2-building-grounded-rag-pipeline-55-mins)
-7. [Section 3: Extending RAG to an Agentic AI Workflow (25 Mins)](#section-3-extending-rag-to-an-agentic-ai-workflow-25-mins)
-8. [Section 4: Production Deployment Track — Serverless Microservices (50 Mins)](#section-4-production-deployment-track--serverless-microservices-50-mins)
-   - [🛠️ Step 0: Setup in Cloud Shell Editor (Clone & `cat .env`)](#️-step-0-setup-in-google-cloud-shell-editor-recommended)
-   - [Option A: 1-Click Automated Deployment](#option-a-1-click-automated-deployment-script)
-   - [Option B: Step-by-Step Manual Deployment](#option-b-step-by-step-manual-deployment-recommended-for-learning)
-9. [Section 5: Production Architecture & Cost Controls (20 Mins)](#section-5-production-architecture--cost-controls-20-mins)
-10. [Section 6: Mandatory Resource Cleanup (10 Mins)](#section-6-mandatory-resource-cleanup-10-mins)
+5. [Section 1: Ingestion & Document Corpus Setup](#section-1-ingestion--document-corpus-setup)
+6. [Section 2: Building Grounded RAG Pipeline](#section-2-building-grounded-rag-pipeline)
+7. [Section 3: Extending RAG to an Agentic AI Workflow](#section-3-extending-rag-to-an-agentic-ai-workflow)
+8. [Section 4: Production Deployment Track — Serverless Microservices](#section-4-production-deployment-track--serverless-microservices)
+9. [Section 5: Production Architecture & Cost Controls](#section-5-production-architecture--cost-controls)
+10. [Section 6: Mandatory Resource Cleanup](#section-6-mandatory-resource-cleanup)
 11. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting--enterprise-best-practices-learnings--gotchas)
-    - [1. Model Availability & Multi-Region (`global` vs `us-central1`)](#1-model-availability--multi-region-architecture-global-vs-us-central1)
-    - [2. Cloud Build & Artifact Registry APIs Missing](#2-cloud-build--artifact-registry-apis-missing-on-deploy-from-source)
-    - [3. Cloud Shell `.env` Upload Failure & Sourcing](#3-cloud-shell-env-upload-failure--sourcing-gotcha)
-    - [4. Cloud Run 500 Error & Container Healthchecks](#4-cloud-run-internal-server-error--container-healthchecks)
-    - [5. Sandbox IAM: `setIamPolicy` Denied vs Project IAM](#5-sandbox-iam-restriction-runservicessetiampolicy-denied-vs-project-level-iam)
-    - [6. Cloud Workflows CLI Syntax: `--location` vs `--region`](#6-cloud-workflows-cli-syntax---location-vs---region)
-    - [7. Cloud Workflows OIDC Token Audience & Token Creator](#7-cloud-workflows-oidc-token-audience-mismatch--token-creator-permissions)
-    - [8. Autonomous Tool Calling vs. Conversational Text](#8-autonomous-tool-calling-vs-conversational-text-fallback)
-    - [9. Safe `function_call` Inspection in SDK](#9-safe-function_call-inspection-in-vertex-ai-sdk)
-    - [10. Dynamic Ticket ID Propagation Across Scenarios](#10-dynamic-ticket-id-propagation-across-scenarios)
-    - [11. Service Account Key Traversal (`gcp-key.json`)](#11-seamless-service-account-key-traversal-gcp-keyjson)
-    - [12. Standalone Cell Execution Guardrails](#12-standalone-cell-execution-guardrails)
-    - [13. macOS zsh `#` Interactive Comment Execution Gotcha](#13-macos-zsh--interactive-comment-execution-gotcha)
-    - [14. Cloud Shell / ADC Quota Project Error (`projects/618104708054`)](#14-cloud-shell--adc-quota-project-error-projects618104708054)
 
 ---
 
@@ -183,7 +162,7 @@ Before beginning the workshop, review the following account, runtime, and develo
 
 | Environment / IDE | Recommendation | When to Use | Setup Notes |
 | :--- | :--- | :--- | :--- |
-| **Google Cloud Shell & Cloud Shell Editor** | 🌟 **Top Recommendation** | Fastest zero-install setup directly in browser | Pre-installed with `gcloud`, `git`, `python3.11`, `curl`, and a browser-based VS Code interface. No local installation required! |
+| **Google Cloud Shell & Cloud Shell Editor** | 🌟 **Top Recommendation** (preffered for this lab) | Fastest zero-install setup directly in browser | Pre-installed with `gcloud`, `git`, `python3.11`, `curl`, and a browser-based VS Code interface. No local installation required! |
 | **VS Code / Cursor (Local)** | Recommended for Local Dev | Developing and debugging locally on your laptop | Requires **Python extension** (`ms-python.python`) and **Jupyter extension** (`ms-toolsai.jupyter`) for opening `.ipynb` notebooks. |
 | **Google Colab** | Recommended for Notebook Track | Running only the interactive notebooks (`notebooks/`) | Zero-install cloud Jupyter runtime. Works directly with `google.colab.auth.authenticate_user()`. |
 | **PyCharm (Professional / Community)** | Optional | JetBrains IDE preference | Configure Python 3.10 or 3.11 virtual environment as the project interpreter. |
@@ -225,56 +204,72 @@ Before beginning the workshop, review the following account, runtime, and develo
 * **Windows:**
   * **Recommended:** Use **Google Cloud Shell** directly in Chrome/Edge, or use **WSL2 (Windows Subsystem for Linux)** with Ubuntu.
   * *Avoid running bash deployment scripts (`.sh`) directly in native Windows Command Prompt (cmd) or Windows PowerShell.*
-* **Hardware Requirements:** Minimal! 4 GB RAM, 2 CPU cores, and 1 GB available disk space. All heavy embedding calculations and LLM reasoning run in Google Cloud's Vertex AI data centers—not on your local machine.
 
 ---
 
 ## Environment Setup & Dependencies
 
-### ⚡ Quickstart: Activate GCP Services via Cloud Shell (1 Command)
 
-Open **Google Cloud Shell** (click the `>_` terminal icon in the top-right navbar of the [Google Cloud Console](https://console.cloud.google.com/)) and run this one-liner to activate all required APIs:
+### 🛠️ Step 0: Setup in Google Cloud Shell Editor (Recommended)
 
-```bash
-# 1. Set your active Project ID
-export PROJECT_ID="your-gcp-project-id"
-gcloud config set project $PROJECT_ID
+The fastest and most reliable way to execute this is inside **Google Cloud Shell Editor** (a full browser-based VS Code environment with pre-authenticated `gcloud`):
 
-# 2. Enable Vertex AI, Cloud Storage, Serverless, and Build APIs
-gcloud services enable \
-  aiplatform.googleapis.com \
-  storage.googleapis.com \
-  run.googleapis.com \
-  cloudfunctions.googleapis.com \
-  workflows.googleapis.com \
-  artifactregistry.googleapis.com \
-  cloudbuild.googleapis.com
+1. **Open Google Cloud Shell Editor:**
+   In the [Google Cloud Console](https://console.cloud.google.com/), click the **`>_`** terminal icon in the top-right navbar, then click the **Open Editor** button on the Cloud Shell toolbar.
 
-echo "✅ All CloudCorp workshop services successfully activated for $PROJECT_ID!"
-```
+2. **Clone the Repository in Cloud Shell:**
+   Open the terminal inside Cloud Shell and clone the lab repository:
+   ```bash
+   git clone https://github.com/UjalaJha/cloudcorp-llms-on-gcp-lab.git
+   cd cloudcorp-llms-on-gcp-lab
+   ```
+   *(To open this repository in the Editor file explorer sidebar, run: `cloudshell workspace .` or click **File** $\to$ **Open Folder** $\to$ `cloudcorp-llms-on-gcp-lab`)*.
 
-> [!TIP]
-> **Running locally on your laptop without `gcloud` installed?** You can create your Service Account and download its JSON key directly from Cloud Shell in 10 seconds:
-> ```bash
-> # Create Service Account with Editor role
-> gcloud iam service-accounts create cloudcorp-lab-sa --display-name="CloudCorp Lab SA"
-> gcloud projects add-iam-policy-binding $PROJECT_ID \
->   --member="serviceAccount:cloudcorp-lab-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
->   --role="roles/editor"
-> 
-> # Create key and download directly to your laptop
-> gcloud iam service-accounts keys create gcp-key.json \
->   --iam-account="cloudcorp-lab-sa@${PROJECT_ID}.iam.gserviceaccount.com"
-> cloudshell download gcp-key.json
-> ```
+3. **Generate and Source `.env` (Why `cat` is Needed Here):**
+   > [!IMPORTANT]
+   > **Why is the `cat` step required right here?**  
+   > 1. `.env` is in `.gitignore` to prevent leaking cloud secrets, so `git clone` intentionally does not include it.  
+   > 2. Uploading a `.env` file from your local laptop through the Cloud Shell web upload dialog often fails or suppresses the file because it is a hidden UNIX dotfile (`.*`).  
+   > 
+   > Running this one-liner directly in your Cloud Shell terminal creates `.env`, automatically populates your active `PROJECT_ID`, and exports all variables into your shell session in one step:
+
+   ```bash
+   cat << EOF > .env
+   PROJECT_ID=$(gcloud config get-value project)
+   REGION=us-central1
+   BUCKET_NAME=$(gcloud config get-value project)-cloudcorp-policies
+   EMBEDDING_MODEL=text-embedding-004
+   GENERATIVE_MODEL=gemini-3.5-flash-lite
+   EOF
+
+   set -a; source .env; set +a
+   ```
+ 
+
+4. **Enable Services:**
+    ```bash
+      # 1. Set your active Project ID
+      gcloud config set project $PROJECT_ID
+
+      # 2. Enable Vertex AI, Cloud Storage, Serverless, and Build APIs
+      gcloud services enable \
+        aiplatform.googleapis.com \
+        storage.googleapis.com \
+        run.googleapis.com \
+        cloudfunctions.googleapis.com \
+        workflows.googleapis.com \
+        artifactregistry.googleapis.com \
+        cloudbuild.googleapis.com
+
+      echo "✅ All CloudCorp workshop services successfully activated for $PROJECT_ID!"
+    ```
+
 
 ---
 
 ### Do You Need a Virtual Environment (`venv`)?
 * **If running in Google Colab:** **No `venv` needed.** Colab runs inside an isolated container VM. The notebooks are 100% self-bootstrapping (auto-installing required libraries and auto-populating policy files if running standalone). Just ensure:
-  1. Billing is enabled on your Google Cloud project.
-  2. The Vertex AI API (`aiplatform.googleapis.com`) and Cloud Storage API (`storage.googleapis.com`) are enabled.
-  3. Enter your `PROJECT_ID` in the Colab form field at the top of the notebook.
+
 * **If running locally on your laptop / Mac:** **Yes, using a `venv` is recommended** to prevent package conflicts with your system Python:
   ```bash
   # 1. Create and activate virtual environment
@@ -287,27 +282,9 @@ echo "✅ All CloudCorp workshop services successfully activated for $PROJECT_ID
 
 ### Centralized Configuration (`.env`)
 
-Depending on your environment, configure `.env` using one of the methods below:
+Depending on your environment, configure `.env`:
 
-#### Option 1: In Google Cloud Shell (Fastest — One-Command `cat`)
-> [!TIP]
-> **Why `cat` in Cloud Shell?**  
-> Google Cloud Shell's web file upload dialog often suppresses hidden UNIX dotfiles (`.env`) or fails to transfer them from your local machine. Creating it directly in Cloud Shell using `cat` is 100% reliable and automatically pulls your active project ID:
-
-```bash
-cat << EOF > .env
-PROJECT_ID=$(gcloud config get-value project)
-REGION=us-central1
-BUCKET_NAME=$(gcloud config get-value project)-cloudcorp-policies
-EMBEDDING_MODEL=text-embedding-004
-GENERATIVE_MODEL=gemini-3.5-flash-lite
-EOF
-
-# Export variables into your Cloud Shell session immediately:
-set -a; source .env; set +a
-```
-
-#### Option 2: Running Locally on Laptop
+#### Running Locally on Laptop
 Copy the provided `.env.example` to `.env` and fill in your GCP project details:
 ```bash
 cp .env.example .env
@@ -382,7 +359,7 @@ GOOGLE_APPLICATION_CREDENTIALS=gcp-key.json
 
 ---
 
-## Section 1: Ingestion & Document Corpus Setup (20 Mins)
+## Section 1: Ingestion & Document Corpus Setup
 
 ### Concept & Theory
 In an enterprise LLM architecture, raw knowledge assets reside in centralized object storage (**Google Cloud Storage**) before vectorization. Documents must be loaded dynamically from the file repository rather than hardcoded in application logic.
@@ -398,7 +375,7 @@ Open and execute the Section 1 notebook:
 
 ---
 
-## Section 2: Building Grounded RAG Pipeline (30 Mins)
+## Section 2: Building Grounded RAG Pipeline
 
 ### Concept & Theory
 1. **Semantic Section Chunking:** Documents are divided along logical section boundaries (`\n---`) to preserve self-contained legal and operational context.
@@ -432,7 +409,7 @@ Open and execute the Section 2 notebook:
 
 ---
 
-## Section 3: Extending RAG to an Agentic AI Workflow (20 Mins)
+## Section 3: Extending RAG to an Agentic AI Workflow
 
 ### Concept & Theory
 Static RAG can only read; it cannot take action, file tickets, or query live databases. An **Agentic AI Workflow** adds:
@@ -454,11 +431,11 @@ Open and execute the Section 3 notebook:
 
 ---
 
-## Section 4: Production Deployment Track — Serverless Microservices (50 Mins)
+## Section 4: Production Deployment Track — Serverless Microservices
 
 > [!NOTE]
 > **Pedagogical Note for Learners & Instructors:**  
-> In Sections 1 through 4, you prototyped, tested, and evaluated RAG and agentic tool-calling interactively inside Python notebooks.  
+> In Sections 1 through 3, you prototyped, tested, and evaluated RAG and agentic tool-calling interactively inside Python notebooks.  
 > In this production track, you deploy that exact same code into live enterprise serverless infrastructure on Google Cloud Platform:
 > * **Cloud Run** hosts the containerized FastAPI RAG service (`rag_service/`).
 > * **Cloud Functions (2nd Gen)** hosts the lightweight IT helpdesk tool (`ticket_tool/`).
@@ -538,7 +515,7 @@ If you executed Sections 1 through 3 in Google Colab or locally, Section 4 trans
 
 ---
 
-### Option A: 1-Click Automated Deployment Script
+### Option A: 1-Click Automated Deployment Script (Not Recommended for Lab)
 
 In **Google Cloud Shell**, run our automated deployment script:
 ```bash
@@ -552,19 +529,8 @@ In **Google Cloud Shell**, run our automated deployment script:
 
 First, load your environment variables (or auto-create `.env` if not uploaded) and authorize service account permissions upfront:
 ```bash
-# 1. Auto-generate .env if not uploaded to Cloud Shell, then export variables
-if [ ! -f .env ]; then
-  cat << EOF > .env
-PROJECT_ID=$(gcloud config get-value project)
-REGION=us-central1
-BUCKET_NAME=$(gcloud config get-value project)-cloudcorp-policies
-EMBEDDING_MODEL=text-embedding-004
-GENERATIVE_MODEL=gemini-3.5-flash-lite
-EOF
-fi
-set -a; source .env; set +a
 
-# 2. Ensure the lab Service Account exists and grant required roles
+# Ensure the lab Service Account exists and grant required roles
 gcloud iam service-accounts create cloudcorp-lab-sa \
   --display-name="CloudCorp Lab Service Account" \
   --quiet 2>/dev/null || true
@@ -584,7 +550,7 @@ gcloud projects add-iam-policy-binding ${PROJECT_ID} \
   --role="roles/iam.serviceAccountTokenCreator" \
   --quiet
 ```
-*(This instantly exports `$PROJECT_ID`, `$REGION`, `$BUCKET_NAME` into your terminal session and ensures your service account has authorization to invoke Cloud Run and generate workflow OIDC tokens).*
+*(This instantly ensures your service account has authorization to invoke Cloud Run and generate workflow OIDC tokens).*
 
 #### Step 1: Deploy Cloud Run RAG Service (Knowledge Layer)
 The RAG logic from Notebook 2 is packaged inside `rag_service/main.py` with FastAPI and a `Dockerfile`.
@@ -694,13 +660,15 @@ gcloud workflows run cloudcorp-agent-workflow \
 
 ---
 
-## Section 5: Production Architecture & Cost Controls (20 Mins)
+## Section 5: Production Architecture & Cost Controls
 
 ### Concept & Theory
 1. **Latency Profiles:** Standard RAG requires 1 retrieval + 1 LLM call (~1.2s). Agentic workflows require multiple reasoning and tool loops (~4.5s).
 2. **Token Amplification:** Agents accumulate conversation history and tool schemas across turns. Guardrails include setting `max_steps=5` and concise tool parameters.
 3. **Matryoshka Representation Learning (MRL):** `text-embedding-004` supports truncating 768-dim vectors to 256-dim, slashing memory usage by 66.7% with <1.5% loss in precision.
 4. **Managed Vector Search vs. In-Memory:** When scaling to >100,000 vectors, transition from in-memory cosine to **Vertex AI Vector Search** with ScaNN.
+5. **Least Priviledged Principle:** When scaling to prod, grant granular roles for resources needed rather than editor role.
+
 
 ### 👉 Hands-On Execution
 Open and execute the Section 4 notebook:
@@ -708,7 +676,7 @@ Open and execute the Section 4 notebook:
 
 ---
 
-## Section 6: Mandatory Resource Cleanup (10 Mins)
+## Section 6: Mandatory Resource Cleanup
 
 To ensure zero ongoing charges and guarantee your total workshop bill remains under **$5.00** (projected actual: **<$0.30**), clean up all deployed compute instances, storage, container images, service accounts, and IAM bindings before concluding your session.
 
