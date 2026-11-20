@@ -15,6 +15,8 @@
 6. [Section 2: Building Grounded RAG Pipeline](#section-2-building-grounded-rag-pipeline)
 7. [Section 3: Extending RAG to an Agentic AI Workflow](#section-3-extending-rag-to-an-agentic-ai-workflow)
 8. [Section 4: Production Deployment Track — Serverless Microservices](#section-4-production-deployment-track--serverless-microservices)
+   - [Track 4A: Serverless Cloud Run Microservice (In-Memory NumPy RAG)](#option-a-1-click-automated-deployment-script-not-recommended-for-lab)
+   - [Bonus Section 4B: Scaling to Millions of Documents with Vertex AI Vector Search](#-bonus-section-4b-scaling-to-millions-of-documents-with-vertex-ai-vector-search-matching-engine)
 9. [Section 5: Production Architecture & Cost Controls](#section-5-production-architecture--cost-controls)
 10. [Section 6: Mandatory Resource Cleanup](#section-6-mandatory-resource-cleanup)
 11. [Troubleshooting & Enterprise Best Practices (Learnings & Gotchas)](#troubleshooting--enterprise-best-practices-learnings--gotchas)
@@ -657,6 +659,107 @@ gcloud workflows run cloudcorp-agent-workflow \
   --data='{"query": "What is the status of my ticket INC-501?", "ticket_id": "INC-501"}'
 ```
 *Expected Result:* Directly calls Cloud Function tool ➔ queries database ➔ returns live progress (`Status: Created / Approved for Loaner`).
+
+---
+
+### 🎁 Bonus Section 4B: Scaling to Millions of Documents with Vertex AI Vector Search (Matching Engine)
+
+> [!NOTE]
+> **Enterprise Architecture Track:**  
+> In **Track 4A**, we computed cosine similarity in-memory using NumPy inside our Cloud Run container (`rag_service/`). This is ideal for knowledge bases up to ~50,000 chunks because Cloud Run scales down to **zero instances**, costing **$0.00** when idle.  
+> 
+> However, enterprise corporations indexing **millions to billions of document vectors** cannot use linear $O(N)$ in-memory scanning. They require **Vertex AI Vector Search (Matching Engine)**: Google's sub-10ms, billion-scale Approximate Nearest Neighbor (ANN) vector database powered by the **ScaNN (Score-aware Approximate Nearest Neighbor)** algorithm.
+
+#### In-Memory NumPy vs. Vertex AI Vector Search Comparison
+
+| Dimension | Track 4A: In-Memory NumPy on Cloud Run | Track 4B: Vertex AI Vector Search (Matching Engine) |
+| :--- | :--- | :--- |
+| **Search Algorithm** | Exact Linear Scan ($O(N)$ brute-force cosine) | Approximate Nearest Neighbor ($O(\log N)$ ScaNN Tree-AH) |
+| **Max Scale** | Up to ~50,000 vectors | **Billions** of dense vectors |
+| **Retrieval Latency** | ~20ms – 150ms (increases with corpus size) | **<10ms P99** at 100,000+ QPS |
+| **Idle Infrastructure Cost**| **$0.00** (Scales to zero on Cloud Run) | **~$0.25 to $0.35/hour** (Requires active VM node for index endpoint) |
+| **Best For** | Departmental tools, FAQs, prototyping, workshops | Massive enterprise knowledge graphs, global vector search |
+
+---
+
+#### Architecture: Vertex AI Vector Search Microservice
+
+```mermaid
+flowchart LR
+    Client["Client / Cloud Workflows<br/>(POST /ask)"] --> CR["Cloud Run Microservice<br/>(rag_service_vector_search/main.py)"]
+    
+    subgraph VertexAI["Vertex AI Managed Services"]
+        CR -->|"1. Asymmetric Query Embedding"| TE["text-embedding-004<br/>(RETRIEVAL_QUERY)"]
+        TE -->|"2. 768-dim Vector"| CR
+        CR -->|"3. find_neighbors(q_vec)"| VE["Vector Search Index Endpoint<br/>(ScaNN Tree-AH Index)"]
+        VE -->|"4. Top-K IDs + Distances"| CR
+        CR -->|"6. Grounded Generation Prompt"| GEM["Gemini 3.5 Flash Lite<br/>(global)"]
+        GEM -->|"7. Grounded Answer"| CR
+    end
+    
+    subgraph Storage["Metadata Cache"]
+        CR -->|"5. Resolve Chunk ID to Text"| GCS[("Google Cloud Storage<br/>(chunks_meta.json)")]
+    end
+    
+    CR -->|"8. JSON Response (Answer + Citations + Distances)"| Client
+
+    classDef gcp fill:#E8F0FE,stroke:#1A73E8,stroke-width:2px,color:#1A202C;
+    classDef storage fill:#ECFDF5,stroke:#10B981,stroke-width:2px,color:#065F46;
+    classDef ai fill:#F3E8FF,stroke:#8B5CF6,stroke-width:2px,color:#4C1D95;
+    class CR gcp;
+    class GCS storage;
+    class TE,VE,GEM ai;
+```
+
+---
+
+#### Hands-On: How to Deploy & Test the Vector Search Service
+
+The repository provides a dedicated, production-ready directory [`rag_service_vector_search/`](rag_service_vector_search/):
+* [`rag_service_vector_search/index_policies.py`](rag_service_vector_search/index_policies.py): Pipeline script to embed corpus, upload JSONL to GCS, create Tree-AH Index, create Index Endpoint, and deploy.
+* [`rag_service_vector_search/main.py`](rag_service_vector_search/main.py): Production FastAPI microservice querying `aiplatform.MatchingEngineIndexEndpoint.find_neighbors()`.
+* [`rag_service_vector_search/cleanup_vector_search.sh`](rag_service_vector_search/cleanup_vector_search.sh): Automated one-click teardown script to undeploy and delete the endpoint.
+
+##### Step 1: Run Batch Indexing & Index Deployment
+In **Google Cloud Shell**, run:
+```bash
+python rag_service_vector_search/index_policies.py
+```
+*(This chunks policies from GCS, generates embeddings, uploads `gs://${BUCKET_NAME}/vector_search_data/embeddings.json`, creates the Tree-AH ScaNN index, and deploys it to a public endpoint. Building and deploying an index takes ~15-20 minutes in GCP).*
+
+When complete, the script outputs your:
+```bash
+export INDEX_ENDPOINT_ID="projects/.../locations/us-central1/indexEndpoints/..."
+export DEPLOYED_INDEX_ID="cloudcorp_policy_deployed"
+```
+
+##### Step 2: Deploy Cloud Run Vector Search Microservice
+```bash
+gcloud run deploy cloudcorp-rag-service-vector-search \
+  --source=rag_service_vector_search \
+  --region=${REGION:-us-central1} \
+  --set-env-vars="PROJECT_ID=${PROJECT_ID},REGION=${REGION:-us-central1},BUCKET_NAME=${BUCKET_NAME},INDEX_ENDPOINT_ID=${INDEX_ENDPOINT_ID},DEPLOYED_INDEX_ID=cloudcorp_policy_deployed" \
+  --service-account="cloudcorp-lab-sa@${PROJECT_ID}.iam.gserviceaccount.com" \
+  --no-allow-unauthenticated \
+  --quiet
+```
+
+##### Step 3: Test Grounded Retrieval via Vector Search
+```bash
+VS_RAG_URL=$(gcloud run services describe cloudcorp-rag-service-vector-search --region=${REGION:-us-central1} --format="value(status.url)")
+
+curl -X POST "${VS_RAG_URL}/ask" \
+  -H "Authorization: Bearer $(gcloud auth print-identity-token)" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "How many days of PTO can I carry over?", "top_k": 2}'
+```
+
+> [!CAUTION]
+> **MANDATORY TEARDOWN FOR BONUS SECTION 4B:**  
+> A deployed Vertex AI Vector Search endpoint deploys a dedicated virtual machine node (`e2-standard-2`) that **does not scale to zero**. To prevent ongoing charges (~$0.25/hr), immediately tear it down after testing:
+> ```bash
+> bash rag_service_vector_search/cleanup_vector_search.sh
+> ```
 
 ---
 

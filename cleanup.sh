@@ -60,6 +60,15 @@ gcloud run services delete cloudcorp-rag-service \
     --region="$REGION" \
     --quiet 2>/dev/null || echo "   Cloud Run service already removed or not found."
 
+gcloud run services delete cloudcorp-rag-service-vector-search \
+    --region="$REGION" \
+    --quiet 2>/dev/null || true
+
+# If Vector Search teardown script exists, run it safely
+if [ -f "rag_service_vector_search/cleanup_vector_search.sh" ]; then
+    bash rag_service_vector_search/cleanup_vector_search.sh 2>/dev/null || true
+fi
+
 # 2. Delete Artifact Registry Repositories (Built by source deploys)
 echo ""
 echo "4/7: Deleting Artifact Registry container repositories..."
