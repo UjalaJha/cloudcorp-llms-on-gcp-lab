@@ -693,6 +693,25 @@ gcloud workflows run cloudcorp-agent-workflow \
 
 ---
 
+#### ⏱️ Lifecycle Timing & Execution Breakdown
+
+> [!TIP]
+> **Instructor & Student Guide:**  
+> In a live workshop setting, students do not need to wait for full deployment to understand the architecture. The entire pipeline takes **~35 to 45 minutes**, with over **85% being passive cloud provisioning wait time**. You can explain the code, walk through the architecture diagram, and review the cost trade-offs even if you choose not to deploy the live endpoint during class!
+
+| Step / Phase | Action Taken | Duration | Type | Pedagogical Takeaway |
+| :--- | :--- | :--- | :--- | :--- |
+| **1. Chunk & Embed Corpus** | Python script generates 768-dim vectors (`text-embedding-004`) | **~30 sec** | Active Script | Shows how raw text transforms into dense geometric vectors. |
+| **2. Build Tree-AH Index** | Vertex AI MapReduce clusters vectors into ScaNN leaf nodes | **~15–20 mins** | Passive GCP Wait | Demonstrates how billion-scale datasets are pre-indexed into fast search trees. |
+| **3. Create Index Endpoint** | API call provisions public endpoint gateway | **~1–2 mins** | Passive GCP Wait | Sets up the network entrypoint for Cloud Run microservices. |
+| **4. Deploy Index to Node** | GCP spins up dedicated serving VM (`e2-standard-2`/`16`), loads index to RAM | **~15–20 mins** | Passive GCP Wait | Explains why vector search cannot scale to zero (RAM residency is required for <10ms latency). |
+| **5. Deploy Cloud Run Service** | Container builds & deploys FastAPI service (`rag_service_vector_search/`) | **~2–3 mins** | Active CLI | Shows standard microservice decoupling from vector storage. |
+| **6. Query & Ground (`/ask`)** | Asymmetric retrieval + Gemini 3.5 Flash Lite synthesis | **~1–2 mins** | Live Test | Shows <10ms vector lookup + distance metrics returned in JSON. |
+| **7. Mandatory Teardown** | Undeploy index and decommission endpoint VM | **~5–8 mins** | Active Script | Reinforces enterprise cloud financial governance (FinOps). |
+| **Total Pipeline** | **End-to-End Enterprise Vector Search** | **~35–45 mins** | *(~5m Active / ~35m Passive)* | Complete enterprise scale-out architecture mastery. |
+
+---
+
 #### Architecture: Vertex AI Vector Search Microservice
 
 ```mermaid
