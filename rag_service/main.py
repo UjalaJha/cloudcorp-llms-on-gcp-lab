@@ -13,7 +13,7 @@ app = FastAPI(
     description="Production-grade lightweight RAG microservice on Cloud Run"
 )
 
-PROJECT_ID = os.environ.get("PROJECT_ID") or os.environ.get("GOOGLE_CLOUD_PROJECT") or "upgradlabs-1751346914784"
+PROJECT_ID = os.environ.get("PROJECT_ID") or os.environ.get("GOOGLE_CLOUD_PROJECT")
 REGION = os.environ.get("REGION", "us-central1")
 BUCKET_NAME = os.environ.get("BUCKET_NAME") or f"{PROJECT_ID}-cloudcorp-policies"
 
