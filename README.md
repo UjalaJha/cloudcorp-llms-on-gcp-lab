@@ -155,9 +155,9 @@ flowchart TD
 
 ---
 
-## Budget & Cost Guardrails (< $5.00)
+## Budget & Cost Guardrails 
 
-This workshop is engineered to execute safely **under $5.00** per learner:
+This workshop is engineered to execute safely with minimal to no cost:
 
 | GCP Service | Lab Usage Configuration | Cost Model / Free Tier | Projected Cost |
 | :--- | :--- | :--- | :--- |
@@ -170,7 +170,7 @@ This workshop is engineered to execute safely **under $5.00** per learner:
 | **Total Estimated Spend**| | | **~$0.05 – $0.20** |
 
 > [!WARNING]
-> **Vector Search Endpoint Cost Trap:** In full production, Vertex AI Vector Search deploys to dedicated VM nodes (`e2-standard-2`) costing ~$0.25 to $0.35/hour that **do not scale down to zero**. To protect learner budgets and eliminate lingering charges, our hands-on lab runs vector cosine similarity in memory on Cloud Run / Colab, while the lecture explains how dedicated Vector Search endpoints operate at scale.
+> **Vector Search Endpoint Cost Trap:** In full production, Vertex AI Vector Search deploys to dedicated VM nodes (`e2-standard-2`) costing ~$0.25 to $0.35/hour that **do not scale down to zero**. To eliminate lingering charges, our hands-on lab runs vector cosine similarity in memory on Cloud Run / Colab, while the lecture explains how dedicated Vector Search endpoints operate at scale.
 
 ---
 
